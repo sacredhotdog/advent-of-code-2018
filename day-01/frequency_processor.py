@@ -10,6 +10,8 @@ class FrequencyProcessor:
         return self._frequency
 
     def process(self, frequency_change):
+        frequency_change = self.prepare_input(frequency_change)
+
         if frequency_change is not None:
             operator = frequency_change[_OPERATION_INDEX]
 
@@ -41,7 +43,6 @@ if __name__ == "__main__":
 
     with open(file_name) as file_object:
         for line in file_object:
-            frequency_change_input = frequency_processor.prepare_input(line)
-            frequency_processor.process(frequency_change_input)
+            frequency_processor.process(line)
 
     print(" -> Frequency = " + str(frequency_processor.get_result()))
