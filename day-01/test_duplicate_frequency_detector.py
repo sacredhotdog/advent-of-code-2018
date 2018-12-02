@@ -8,24 +8,26 @@ class TestDuplicateFrequencyDetector(unittest.TestCase):
         duplicate_frequency_detector = DuplicateFrequencyDetector()
 
         self.assertIsNone(duplicate_frequency_detector.get_duplicate())
-        self.assertEqual(duplicate_frequency_detector.duplicate_found(), False)
+        self.assertFalse(duplicate_frequency_detector.duplicate_found())
 
     def test_frequency_is_recorded_correctly_the_first_time(self):
         frequency_change = 77
+        expected_result = 1
         duplicate_frequency_detector = DuplicateFrequencyDetector()
 
         duplicate_frequency_detector.record(frequency_change)
 
-        self.assertEqual(duplicate_frequency_detector._frequencies.get(frequency_change), 1)
+        self.assertEqual(duplicate_frequency_detector._frequencies.get(frequency_change), expected_result)
 
     def test_duplicated_frequency_is_recorded_correctly(self):
         frequency_change = 88
+        expected_result = 2
         duplicate_frequency_detector = DuplicateFrequencyDetector()
 
         duplicate_frequency_detector.record(frequency_change)
         duplicate_frequency_detector.record(frequency_change)
 
-        self.assertEqual(duplicate_frequency_detector._frequencies.get(frequency_change), 2)
+        self.assertEqual(duplicate_frequency_detector._frequencies.get(frequency_change), expected_result)
 
     def test_no_more_recording_takes_place_after_a_duplicate_has_been_found(self):
         frequency_change_1 = 88
@@ -50,7 +52,7 @@ class TestDuplicateFrequencyDetector(unittest.TestCase):
         self.assertEqual(duplicate_frequency_detector.duplicate_found(), True)
         self.assertEqual(duplicate_frequency_detector.get_duplicate(), expected_result)
 
-    def test_input_processed_correctly(self):
+    def test_input_processed_correctly_with_wraparound(self):
         # 1 -2 0 1
         frequency_changes = "+1\n-3\n+2"
         expected_result = 1
@@ -61,7 +63,7 @@ class TestDuplicateFrequencyDetector(unittest.TestCase):
         self.assertEqual(duplicate_frequency_detector.duplicate_found(), True)
         self.assertEqual(duplicate_frequency_detector.get_duplicate(), expected_result)
 
-    def test_empty_line_input_processed_correctly(self):
+    def test_empty_line_input_processed_correctly_with_wraparound(self):
         # 1 -2 0 1
         frequency_changes = "+1\n-3\n+2\n"
         expected_result = 1
