@@ -38,7 +38,7 @@ class FrequencyProcessor:
 
 
 if __name__ == "__main__":
-    file_name = "input.txt"
+    file_name = "frequencies.txt"
     frequency_processor = FrequencyProcessor()
 
     with open(file_name) as file_object:

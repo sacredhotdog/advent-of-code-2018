@@ -37,7 +37,7 @@ class DuplicateFrequencyDetector:
 
 
 if __name__ == "__main__":
-    file_name = "input.txt"
+    file_name = "frequencies.txt"
 
     with open(file_name) as file_object:
         file_content = file_object.read()
