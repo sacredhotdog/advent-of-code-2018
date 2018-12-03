@@ -18,6 +18,13 @@ class TestClaimParser(unittest.TestCase):
 
         self.assertIsNone(result)
 
+    def test_whitespace_only_is_ignored(self):
+        claim_parser = ClaimParser()
+
+        result = claim_parser.parse(" ")
+
+        self.assertIsNone(result)
+
     def test_handles_invalid_input(self):
         claim_input = "wqert123a ads"
         claim_parser = ClaimParser()
