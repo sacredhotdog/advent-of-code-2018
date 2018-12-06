@@ -1,4 +1,5 @@
 from difflib import SequenceMatcher
+import datetime
 
 
 class FindNearestMatch:
@@ -14,17 +15,11 @@ class FindNearestMatch:
 
     def find(self, box_ids):
         for this_box_id in box_ids:
-            if this_box_id is None:
-                continue
-
-            if len(this_box_id) > 0:
+            if this_box_id:
                 this_box_id = this_box_id.replace(" ", "")
                 threshold = 1.0 - self.calculate_single_character_percentage(this_box_id)
 
                 for that_box_id in box_ids:
-                    if that_box_id is None:
-                        continue
-
                     if this_box_id == that_box_id:
                         continue
 
@@ -56,13 +51,19 @@ class FindNearestMatch:
 
 
 if __name__ == "__main__":
+    print(" -> Start: " + str(datetime.datetime.now()))
+
     file_name = "box_ids.txt"
 
     with open(file_name) as file_object:
         file_content = file_object.read()
 
+    print(" -> File read complete: " + str(datetime.datetime.now()))
+
     find_nearest_match = FindNearestMatch()
     find_nearest_match.find(file_content.split("\n"))
     result = find_nearest_match.get_matching_characters()
 
+    print(" -> End: " + str(datetime.datetime.now()))
     print(" -> " + result)
+
