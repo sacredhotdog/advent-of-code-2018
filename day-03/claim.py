@@ -1,11 +1,11 @@
 class Claim:
 
-    def __init__(self):
-        self.claim_id = None
-        self.inches_from_left_edge = None
-        self.inches_from_top_edge = None
-        self.width = None
-        self.height = None
+    def __init__(self, claim_id=None, inches_from_left_edge=None, inches_from_top_edge=None, width=None, height=None):
+        self.claim_id = claim_id
+        self.inches_from_left_edge = inches_from_left_edge
+        self.inches_from_top_edge = inches_from_top_edge
+        self.width = width
+        self.height = height
 
     @property
     def claim_id(self):
