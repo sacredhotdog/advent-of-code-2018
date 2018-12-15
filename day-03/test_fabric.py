@@ -104,7 +104,7 @@ class TestFabric(unittest.TestCase):
         self.assertEqual(fabric.get(2, 1), 101)
         self.assertEqual(fabric.get(2, 2), 101)
 
-    def test_multiple_overlap_is_recorded_correctly(self):
+    def test_multiple_separet_overlaps_are_recorded_correctly(self):
         #       0   1   2   3   4
         #   +--------------------
         # 0 | 100 100   0   0   0
@@ -155,6 +155,36 @@ class TestFabric(unittest.TestCase):
         self.assertEqual(fabric.get(5, 2), 0)
         self.assertEqual(fabric.get(5, 3), 0)
         self.assertEqual(fabric.get(5, 4), 0)
+
+    def test_multiple_common_overlaps_are_recorded_correctly(self):
+        claim1 = Claim(100, 0, 0, 1, 1)
+        claim2 = Claim(101, 0, 0, 1, 1)
+        claim3 = Claim(102, 0, 0, 1, 1)
+        fabric = Fabric(1, 1)
+
+        fabric.place_claim(claim1)
+        fabric.place_claim(claim2)
+        fabric.place_claim(claim3)
+
+        self.assertEqual(fabric.get(0, 0), "X")
+
+    def test_handles_None_claim(self):
+        fabric = Fabric(1, 1)
+
+        fabric.place_claim(None)
+
+        self.assertEqual(fabric.get(0, 0), 0)
+
+    def test_claim_ids_must_be_handled_as_numbers(self):
+        claim1 = Claim(100, 0, 0, 1, 1)
+        claim2 = Claim("101", 1, 1, 1, 1)
+        fabric = Fabric(2, 2)
+
+        fabric.place_claim(claim1)
+        fabric.place_claim(claim2)
+
+        self.assertEqual(fabric.get(0, 0), 100)
+        self.assertEqual(fabric.get(1, 1), 101)
 
 
 if __name__ == "__main__":
