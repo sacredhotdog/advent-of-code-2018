@@ -104,7 +104,7 @@ class TestFabric(unittest.TestCase):
         self.assertEqual(fabric.get(2, 1), 101)
         self.assertEqual(fabric.get(2, 2), 101)
 
-    def test_multiple_separet_overlaps_are_recorded_correctly(self):
+    def test_multiple_separate_overlaps_are_recorded_correctly(self):
         #       0   1   2   3   4
         #   +--------------------
         # 0 | 100 100   0   0   0
@@ -117,9 +117,7 @@ class TestFabric(unittest.TestCase):
         claim1 = Claim(100, 0, 0, 2, 2)
         claim2 = Claim(101, 1, 1, 3, 3)
         claim3 = Claim(102, 1, 3, 3, 2)
-        fabric_width = 5
-        fabric_height = 6
-        fabric = Fabric(fabric_width, fabric_height)
+        fabric = Fabric(5, 6)
 
         fabric.place_claim(claim1)
         fabric.place_claim(claim2)
@@ -185,6 +183,81 @@ class TestFabric(unittest.TestCase):
 
         self.assertEqual(fabric.get(0, 0), 100)
         self.assertEqual(fabric.get(1, 1), 101)
+
+    def test_tracking_of_initial_undisputed_claim(self):
+        claim = Claim(105, 0, 0, 1, 1)
+        fabric = Fabric(2, 2)
+
+        fabric.place_claim(claim)
+        result = fabric.undisputed_claims()
+
+        self.assertEqual(result[0], 105)
+
+    def test_tracking_of_two_undisputed_claims(self):
+        claim1 = Claim(105, 0, 0, 1, 1)
+        claim2 = Claim(107, 1, 1, 1, 1)
+        fabric = Fabric(2, 2)
+
+        fabric.place_claim(claim1)
+        fabric.place_claim(claim2)
+        result = fabric.undisputed_claims()
+
+        self.assertEqual(result[0], 105)
+        self.assertEqual(result[1], 107)
+
+    def test_two_disputed_claims_are_no_longer_recognised_as_undisputed(self):
+        claim1 = Claim(105, 0, 0, 1, 1)
+        claim2 = Claim(107, 0, 0, 1, 1)
+        fabric = Fabric(2, 2)
+
+        fabric.place_claim(claim1)
+        fabric.place_claim(claim2)
+        result = fabric.undisputed_claims()
+
+        self.assertEqual(len(result), 0)
+
+    def test_multiple_disputed_claims_are_no_longer_recognised_as_undisputed(self):
+        #       0   1   2   3   4
+        #   +--------------------
+        # 0 | 100 100   0   0   0
+        # 1 | 100   X 101 101   0
+        # 2 |   0 101 101 101   0
+        # 3 |   0   X   X   X   0
+        # 4 |   0 102 102 102   0
+        # 5 |   0   0   0   0   0
+
+        claim1 = Claim(100, 0, 0, 2, 2)
+        claim2 = Claim(101, 1, 1, 3, 3)
+        claim3 = Claim(102, 1, 3, 3, 2)
+        fabric = Fabric(5, 6)
+
+        # Ordering the claim placement is important here, as placing the second claim
+        # requires the detection of more than one overlapping claim in a single pass.
+        fabric.place_claim(claim1)
+        fabric.place_claim(claim3)
+        fabric.place_claim(claim2)
+        result = fabric.undisputed_claims()
+
+        self.assertEqual(len(result), 0)
+
+    def test_detecting_the_previous_claim_id_when_only_working_with_the_overlap_marker(self):
+        #       0   1
+        #   +--------
+        # 0 | 100   0
+        # 1 |   X 102
+        # 2 | 101   0
+
+        claim1 = Claim(100, 0, 0, 1, 2)
+        claim2 = Claim(101, 0, 1, 1, 2)
+        claim3 = Claim(102, 0, 1, 2, 1)
+        fabric = Fabric(2, 3)
+
+        fabric.place_claim(claim1)
+        fabric.place_claim(claim2)
+        fabric.place_claim(claim3)
+        result = fabric.undisputed_claims()
+
+        self.assertEqual(len(result), 0)
 
 
 if __name__ == "__main__":
