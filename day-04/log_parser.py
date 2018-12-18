@@ -6,12 +6,13 @@ from log_entry import LogEntry
 class LogParser:
 
     def __init__(self):
-        self._guard_regex = re.compile("\[([0-9]+)-([0-9]+)-([0-9]+) "
-                                       "([0-9]+):([0-9]+)\] "
-                                       "Guard #([0-9]+) ([a-z ]+)")
-        self._other_events_regex = re.compile("\[([0-9]+)-([0-9]+)-([0-9]+) "
-                                              "([0-9]+):([0-9]+)\] "
-                                              "([a-z ]+)")
+        self._guard_regex = re.compile("\[([0-9]+)-([0-9]+)-([0-9]+) "  # 1, 2, 3: Date
+                                       "([0-9]+):([0-9]+)\] "           # 4, 5:    Time
+                                       "Guard #([0-9]+) "               # 6:       Guard ID
+                                       "([a-z ]+)")                     # 7:       Event
+        self._other_events_regex = re.compile("\[([0-9]+)-([0-9]+)-([0-9]+) "   # 1, 2, 3: Date
+                                              "([0-9]+):([0-9]+)\] "            # 4, 5:    Time
+                                              "([a-z ]+)")                      # 6:       Event
 
     def parse(self, log_input):
         if log_input is not None:
