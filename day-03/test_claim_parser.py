@@ -39,7 +39,7 @@ class TestClaimParser(unittest.TestCase):
 
         claim = claim_parser.parse(claim_input)
 
-        self.assertEqual(claim.claim_id, "1")
+        self.assertEqual(claim.claim_id, 1)
         self.assertEqual(claim.inches_from_left_edge, 306)
         self.assertEqual(claim.inches_from_top_edge, 433)
         self.assertEqual(claim.width, 16)
