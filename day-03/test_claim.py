@@ -28,14 +28,6 @@ class TestClaim(unittest.TestCase):
         self.assertEqual(claim.width, width)
         self.assertEqual(claim.height, height)
 
-    def test_string_claim_ids_should_be_handled_correctly(self):
-        claim_id = "101"
-
-        claim = Claim(claim_id)
-
-        self.assertTrue(isinstance(claim.claim_id, int))
-        self.assertEqual(claim.claim_id, 101)
-
 
 if __name__ == "__main__":
     unittest.main()

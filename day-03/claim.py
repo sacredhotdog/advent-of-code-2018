@@ -13,10 +13,7 @@ class Claim:
 
     @claim_id.setter
     def claim_id(self, value):
-        if value is not None and not isinstance(value, int):
-            self._claim_id = int(value)
-        else:
-            self._claim_id = value
+        self._claim_id = value
 
     @claim_id.deleter
     def claim_id(self):

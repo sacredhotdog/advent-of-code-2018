@@ -21,7 +21,7 @@ class ClaimParser:
 
             if match:
                 claim = Claim()
-                claim.claim_id = match[_CLAIM_ID]
+                claim.claim_id = int(match[_CLAIM_ID])
                 claim.inches_from_left_edge = int(match[_LEFT])
                 claim.inches_from_top_edge = int(match[_TOP])
                 claim.width = int(match[_WIDTH])
