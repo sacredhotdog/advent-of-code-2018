@@ -1,6 +1,6 @@
 import unittest
 from log_entry import LogEntry
-from datetime import date, time, datetime
+from datetime import datetime
 from guard_activity import GuardActivity
 
 
@@ -106,9 +106,10 @@ class TestGuardActivity(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_correct_times_are_returned_for_a_guard(self):
+        guard_id = 700
         guard_activity = GuardActivity()
         guard_activity.add_events(
-            [LogEntry(datetime(2018, 1, 1, 0, 1), 700, "begins shift"),
+            [LogEntry(datetime(2018, 1, 1, 0, 1), guard_id, "begins shift"),
              LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 2), entry_event="falls asleep"),
              LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 5), entry_event="wakes up"),
              LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 6), entry_event="falls asleep"),
@@ -121,34 +122,64 @@ class TestGuardActivity(unittest.TestCase):
         expected_result = [[datetime(2018, 1, 1, 0, 2), datetime(2018, 1, 1, 0, 5)],
                            [datetime(2018, 1, 1, 0, 6), datetime(2018, 1, 1, 0, 8)]]
 
-        result = guard_activity.get_times_for_guard(700)
+        result = guard_activity.get_times_for_guard(guard_id)
 
         self.assertListEqual(result, expected_result)
 
-    def test_correct_most_common_minute_asleep_is_correctly_reported(self):
+    def test_most_common_minute_asleep_is_correctly_reported(self):
         guard_id = 700
         guard_activity = GuardActivity()
         guard_activity.add_events(
-            [LogEntry(datetime(2018, 1, 1, 0, 1), 700, "begins shift"),
+            [LogEntry(datetime(2018, 1, 1, 0, 1), guard_id, "begins shift"),
              LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 2), entry_event="falls asleep"),
              LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 5), entry_event="wakes up"),
              LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 6), entry_event="falls asleep"),
              LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 8), entry_event="wakes up"),
-             LogEntry(datetime(2018, 1, 2, 0, 1), 700, "begins shift"),
+             LogEntry(datetime(2018, 1, 2, 0, 1), guard_id, "begins shift"),
              LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 2), entry_event="falls asleep"),
              LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 3), entry_event="wakes up"),
              LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 9), entry_event="falls asleep"),
              LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 10), entry_event="wakes up"),
-             LogEntry(datetime(2018, 1, 3, 0, 1), 700, "begins shift"),
+             LogEntry(datetime(2018, 1, 3, 0, 1), guard_id, "begins shift"),
              LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 2), entry_event="falls asleep"),
              LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 3), entry_event="wakes up"),
              LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 11), entry_event="falls asleep"),
              LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 12), entry_event="wakes up")])
-        expected_result = 2
+        expected_most_common_minute = 2
+        expected_count = 3
 
-        result = guard_activity.get_most_common_time_asleep(700)
+        minute_result, count_result = guard_activity.get_most_common_time_asleep(guard_id)
 
-        self.assertEqual(result, expected_result)
+        self.assertEqual(minute_result, expected_most_common_minute)
+        self.assertEqual(count_result, expected_count)
+
+    def test_most_common_minute_asleep_is_correctly_reported_across_all_guards(self):
+        expected_guard_id = 700
+        guard_activity = GuardActivity()
+        guard_activity.add_events(
+            [LogEntry(datetime(2018, 1, 1, 0, 1), expected_guard_id, "begins shift"),
+             LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 2), entry_event="falls asleep"),
+             LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 5), entry_event="wakes up"),
+             LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 6), entry_event="falls asleep"),
+             LogEntry(entry_datetime=datetime(2018, 1, 1, 0, 8), entry_event="wakes up"),
+             LogEntry(datetime(2018, 1, 2, 0, 1), expected_guard_id, "begins shift"),
+             LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 2), entry_event="falls asleep"),
+             LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 3), entry_event="wakes up"),
+             LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 9), entry_event="falls asleep"),
+             LogEntry(entry_datetime=datetime(2018, 1, 2, 0, 10), entry_event="wakes up"),
+             LogEntry(datetime(2018, 1, 3, 0, 1), 701, "begins shift"),
+             LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 2), entry_event="falls asleep"),
+             LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 3), entry_event="wakes up"),
+             LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 11), entry_event="falls asleep"),
+             LogEntry(entry_datetime=datetime(2018, 1, 3, 0, 12), entry_event="wakes up")])
+        expected_most_common_minute = 2
+        expected_count = 2
+
+        guard_id_result, minute_result, count_result = guard_activity.get_most_common_time_asleep_for_all_guards()
+
+        self.assertEqual(guard_id_result, expected_guard_id)
+        self.assertEqual(minute_result, expected_most_common_minute)
+        self.assertEqual(count_result, expected_count)
 
 
 if __name__ == "__main__":

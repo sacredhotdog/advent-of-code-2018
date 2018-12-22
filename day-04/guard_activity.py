@@ -1,6 +1,5 @@
 from log_parser import LogParser
-import statistics
-
+from scipy import stats
 
 TIME_ASLEEP_KEY = "time_asleep"
 GUARD_ID_KEY = "guard_id"
@@ -77,7 +76,22 @@ class GuardActivity:
             for minute in range(start_minutes, end_minutes):
                 data.append(minute)
 
-        return statistics.mode(data)
+        mode = stats.mode(data)
+
+        return mode[0], mode[1]
+
+    def get_most_common_time_asleep_for_all_guards(self):
+        result = {"guard_id": 0, "most_common_minute": 0, "count": 0}
+
+        for guard_key, guard_value in self._guard_data.items():
+            minute, count = self.get_most_common_time_asleep(guard_key)
+
+            if count > result["count"]:
+                result["guard_id"] = guard_key
+                result["most_common_minute"] = minute
+                result["count"] = count
+
+        return result["guard_id"], result["most_common_minute"], result["count"]
 
 
 if __name__ == "__main__":
@@ -96,9 +110,14 @@ if __name__ == "__main__":
     sleepiest_guard_id = guard_activity.get_sleepiest_guard()
 
     time_asleep = guard_activity.get_total_time_asleep(sleepiest_guard_id)
-    print(" -> Sleepiest guard: " + str(sleepiest_guard_id) + " (slept for " + str(time_asleep) + " minutes)")
+    print("Sleepiest guard: " + str(sleepiest_guard_id) + " (slept for " + str(time_asleep) + " minutes)")
 
     most_common_minute_asleep = guard_activity.get_most_common_time_asleep(sleepiest_guard_id)
-    print(" -> Most common minute asleep: " + str(most_common_minute_asleep))
+    print("Most common minute asleep: " + str(most_common_minute_asleep))
 
-    print(" -> ID x most common minute: " + str(sleepiest_guard_id * most_common_minute_asleep))
+    print(" -> Part 1 answer: guard ID x most common minute = " + str(sleepiest_guard_id * most_common_minute_asleep))
+
+    guard_id, minute, count = guard_activity.get_most_common_time_asleep_for_all_guards()
+    print("Guard " + str(guard_id) + " was asleep " + str(count) + " times at minute " + str(minute))
+
+    print(" -> Part 2 answer: guard ID x most common minute = " + str(guard_id * minute))
