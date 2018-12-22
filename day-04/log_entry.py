@@ -5,35 +5,22 @@ WAKES_UP = "wakes up"
 
 class LogEntry:
 
-    def __init__(self, entry_date=None, entry_time=None, entry_guard_id=0, entry_event=None):
-        self.event_date = entry_date
-        self.event_time = entry_time
+    def __init__(self, entry_datetime=None, entry_guard_id=0, entry_event=None):
+        self.event_datetime = entry_datetime
         self.guard_id = entry_guard_id
         self.event = entry_event
 
     @property
-    def event_date(self):
+    def event_datetime(self):
         return self._event_date
 
-    @event_date.setter
-    def event_date(self, value):
+    @event_datetime.setter
+    def event_datetime(self, value):
         self._event_date = value
 
-    @event_date.deleter
-    def event_date(self):
+    @event_datetime.deleter
+    def event_datetime(self):
         del self._event_date
-
-    @property
-    def event_time(self):
-        return self._event_time
-
-    @event_time.setter
-    def event_time(self, value):
-        self._event_time = value
-
-    @event_time.deleter
-    def event_time(self):
-        del self._event_time
 
     @property
     def guard_id(self):
