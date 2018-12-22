@@ -1,6 +1,6 @@
-BEGINS_SHIFT = "begins shift"
-FALLS_ASLEEP = "falls asleep"
-WAKES_UP = "wakes up"
+_BEGINS_SHIFT = "begins shift"
+_FALLS_ASLEEP = "falls asleep"
+_WAKES_UP = "wakes up"
 
 
 class LogEntry:
@@ -47,10 +47,10 @@ class LogEntry:
         del self._event
 
     def is_start_shift_event(self):
-        return self._event == BEGINS_SHIFT
+        return self._event == _BEGINS_SHIFT
 
     def is_falls_asleep_event(self):
-        return self._event == FALLS_ASLEEP
+        return self._event == _FALLS_ASLEEP
 
     def is_wakes_up_event(self):
-        return self._event == WAKES_UP
+        return self._event == _WAKES_UP
